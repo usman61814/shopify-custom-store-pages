@@ -1,0 +1,99 @@
+<style>
+  html,body{overflow-x:hidden;max-width:100%}
+
+  #fc-site-header{display:flex;align-items:center;justify-content:space-between;position:relative;box-sizing:border-box;width:100%;max-width:1300px;margin:0 auto;padding:14px 40px;background:#fff}
+  .fc-header__brand img{display:block;height:60px;width:auto}
+
+  .fc-header__menu{display:flex;align-items:center;flex-wrap:wrap;gap:36px;max-width:100%;margin:0;padding:0;list-style:none}
+  .fc-header__menu-item a{color:#171717;font-size:15px;font-weight:500;text-decoration:none}
+  .fc-header__menu-item a:hover,.fc-header__cart:hover{color:#f97316}
+
+  .fc-header__actions{display:flex;align-items:center;gap:16px}
+
+  .fc-header__cart{position:relative;display:flex;align-items:center;justify-content:center;flex-shrink:0;width:44px;height:44px;color:#171717;text-decoration:none}
+  .fc-header__cart svg{display:block;width:26px;height:26px}
+  .fc-header__cart-count{position:absolute;top:2px;right:0;box-sizing:border-box;min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:#f97316;color:#fff;font-size:11px;font-weight:600;line-height:18px;text-align:center}
+  .fc-header__cart-count[hidden]{display:none}
+
+  .fc-header__burger{display:none;flex-direction:column;gap:5px;padding:6px;cursor:pointer;-webkit-tap-highlight-color:transparent}
+  .fc-header__burger span{width:24px;height:2px;border-radius:2px;background:#171717;transition:transform .3s ease,opacity .2s ease}
+  #fc-header-menu-state{display:none}
+
+  @media(max-width:991px){
+    #fc-site-header{max-width:100%;padding:14px 20px}
+    .fc-header__actions{gap:8px}
+    .fc-header__cta{display:none}
+    .fc-header__burger{display:flex}
+
+    /* Dropdown: 20px side gaps, 10px radius, smooth open/close */
+    .fc-header__menu{position:absolute;top:calc(100% + 8px);left:20px;right:20px;z-index:999;box-sizing:border-box;flex-direction:column;align-items:stretch;flex-wrap:nowrap;gap:0;overflow:hidden;border-radius:10px;background:#fff;box-shadow:0 10px 30px rgba(0,0,0,.12);
+      max-height:0;opacity:0;visibility:hidden;pointer-events:none;transform:translateY(-8px);
+      transition:max-height .35s ease,opacity .3s ease,transform .3s ease,visibility 0s linear .35s}
+    #fc-header-menu-state:checked~.fc-header__menu{max-height:400px;opacity:1;visibility:visible;pointer-events:auto;transform:none;
+      transition:max-height .35s ease,opacity .3s ease,transform .3s ease,visibility 0s}
+    .fc-header__menu-item a{display:block;padding:14px 20px;border-top:1px solid #eee}
+    .fc-header__menu-item:first-child a{border-top:0}
+
+    /* Hamburger to cross */
+    #fc-header-menu-state:checked~.fc-header__actions .fc-header__burger span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+    #fc-header-menu-state:checked~.fc-header__actions .fc-header__burger span:nth-child(2){opacity:0;transform:scaleX(0)}
+    #fc-header-menu-state:checked~.fc-header__actions .fc-header__burger span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+  }
+
+  @media(max-width:480px){
+    #fc-site-header{padding:0 16px}
+    .fc-header__brand img{height:50px}
+  }
+</style>
+
+<header id="fc-site-header">
+  <a href="{{ routes.root_url }}" class="fc-header__brand">
+    <img src="https://cdn.shopify.com/s/files/1/1000/2477/9041/files/FC_Logo.png?v=1790247761" alt="Flora Career" width="160" height="60">
+  </a>
+
+  <input type="checkbox" id="fc-header-menu-state">
+
+  <ul class="fc-header__menu">
+    {%- for link in linklists.main-menu.links -%}
+      <li class="fc-header__menu-item"><a href="{{ link.url }}">{{ link.title }}</a></li>
+    {%- endfor -%}
+  </ul>
+
+  <div class="fc-header__actions">
+    <span class="fc-header__cta">
+      {% render 'global-button',
+         text: 'Get Started',
+         url: '/#price',
+         width: 190,
+         height: 52,
+         font_size: 16,
+         bg_color: '#F97316',
+         text_color: '#ffffff',
+         hover_bg_color: '#d9630f',
+         hover_text_color: '#ffffff'
+      %}
+    </span>
+
+    <a href="{{ routes.cart_url }}" class="fc-header__cart" aria-label="Cart ({{ cart.item_count }} items)">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round" aria-hidden="true">
+        <path d="M5.33 6h14.54a1 1 0 0 1 .99 1.12l-.75 6a1 1 0 0 1-.99.88H8"/>
+        <path d="M2 4h2.23a1 1 0 0 1 .97.74l3.1 11.52a1 1 0 0 0 .97.74H19" stroke-linecap="round"/>
+        <circle cx="10" cy="20" r="1"/>
+        <circle cx="17.5" cy="20" r="1"/>
+      </svg>
+      <span class="fc-header__cart-count" {% if cart.item_count == 0 %}hidden{% endif %}>{{ cart.item_count }}</span>
+    </a>
+
+    <label for="fc-header-menu-state" class="fc-header__burger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </label>
+  </div>
+</header>
+
+{% schema %}
+{
+  "name": "FC Site Header",
+  "settings": [],
+  "presets": [{ "name": "FC Site Header" }]
+}
+{% endschema %}

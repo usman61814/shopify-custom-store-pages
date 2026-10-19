@@ -1,0 +1,302 @@
+{%- assign product = section.settings.product | default: all_products['professional-plan'] -%}
+{%- assign variant = product.selected_or_first_available_variant -%}
+
+{% # theme-check-disable RemoteAsset %}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;700;800&family=Geist+Mono:wght@500;700&display=swap" rel="stylesheet">
+{% # theme-check-enable RemoteAsset %}
+
+<style>
+  #flora-order{--ink:#171717;--muted:#6b7280;--line:#e5e5e0;--soft:#fafaf7;--acc:#f97316;--acc-d:#ea6a0a;--red:#b23a2f;
+    --r:16px;--fr:10px;--sans:'Geist','Inter',Arial,sans-serif;--mono:'Geist Mono','Courier New',monospace;
+    background:#fff;color:var(--ink);font-family:var(--sans);padding:56px 20px 88px}
+  #flora-order *{box-sizing:border-box}
+  #flora-order .fo-wrap{max-width:1100px;margin:0 auto}
+  #flora-order .fo-eyebrow{font:500 12px var(--mono);letter-spacing:.18em;color:var(--acc);text-transform:uppercase}
+  #flora-order h1{font:800 clamp(34px,5.5vw,60px)/1 var(--sans);letter-spacing:-.035em;margin:14px 0 20px;max-width:760px}
+  #flora-order h2,#flora-order h3{font-family:var(--sans);font-weight:700;letter-spacing:-.02em;margin:0 0 6px}
+  #flora-order h2{font-size:24px}
+  #flora-order h3{font-size:18px}
+  #flora-order .fo-steps{font:13px var(--mono);margin-bottom:32px;display:flex;gap:22px;flex-wrap:wrap;color:var(--muted)}
+  #flora-order .fo-steps b{color:var(--ink)}
+  #flora-order .fo-grid{display:grid;grid-template-columns:1.7fr 1fr;gap:28px;align-items:start}
+  #flora-order .fo-grid>*,#flora-order .fo-fields>*{min-width:0}
+  #flora-order .fo-card{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:28px}
+  #flora-order .fo-sub{color:var(--muted);font-size:15px;margin:0 0 22px;line-height:1.5}
+
+  #flora-order .fo-private{display:flex;gap:12px;align-items:flex-start;background:var(--soft);border:1px solid var(--line);border-radius:var(--fr);padding:16px;margin-bottom:22px;cursor:pointer}
+  #flora-order .fo-private input{margin-top:3px;width:18px;height:18px;accent-color:var(--acc);flex-shrink:0}
+  #flora-order .fo-private strong{font-size:15px;display:block;margin-bottom:2px}
+  #flora-order .fo-private small{color:var(--muted);font-size:13px;line-height:1.45}
+
+  #flora-order .fo-fields{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  #flora-order .fo-fields.is-hidden{display:none}
+  #flora-order .fo-full{grid-column:1/-1}
+  #flora-order label{font-size:13px;font-weight:500;display:block;margin-bottom:6px}
+  #flora-order .fo-opt{color:var(--muted);font-weight:400}
+  #flora-order input[type=text],#flora-order input[type=email],#flora-order input[type=tel],#flora-order select{
+    width:100%;height:48px;padding:0 14px;font:15px var(--sans);border:1px solid var(--line);border-radius:var(--fr);background:#fff;color:var(--ink)}
+  #flora-order input::placeholder{color:#a3a3a3}
+  #flora-order input:focus,#flora-order select:focus{outline:2px solid var(--acc);outline-offset:1px;border-color:var(--acc)}
+
+  #flora-order .fo-drop{position:relative;overflow:hidden;display:flex;align-items:center;gap:14px;margin:0;padding:16px;border:1.5px dashed #d4d4cc;border-radius:var(--fr);background:var(--soft);cursor:pointer;transition:border-color .15s,background .15s}
+  #flora-order .fo-drop:hover,#flora-order .fo-drop.is-over{border-color:var(--acc);background:#fff7ed}
+  #flora-order .fo-drop svg{flex-shrink:0;color:var(--acc)}
+  #flora-order .fo-drop span{font-size:14px;line-height:1.4}
+  #flora-order .fo-drop small{display:block;color:var(--muted);font-size:12px;margin-top:2px}
+  #flora-order .fo-drop input{position:absolute;inset:0;width:100%;height:100%;opacity:0;pointer-events:none}
+  #flora-order .fo-file{display:none;align-items:center;justify-content:space-between;gap:12px;margin-top:10px;padding:10px 14px;border:1px solid var(--line);border-radius:var(--fr);font-size:14px}
+  #flora-order .fo-file.is-on{display:flex}
+  #flora-order .fo-file em{font-style:normal;word-break:break-all}
+  #flora-order .fo-file button{background:none;border:0;color:var(--acc);cursor:pointer;font:13px var(--mono);padding:0}
+
+  #flora-order .fo-btn{width:100%;margin-top:26px;min-height:58px;border:0;cursor:pointer;background:var(--acc);color:#fff;border-radius:var(--r);font:500 16px var(--mono);transition:background .15s}
+  #flora-order .fo-btn:hover{background:var(--acc-d)}
+  #flora-order .fo-btn[disabled]{opacity:.6;cursor:wait}
+  #flora-order .fo-note{text-align:center;color:var(--muted);font-size:13px;margin:14px 0 0;line-height:1.5}
+  #flora-order .fo-error{color:#dc2626;font-size:14px;margin-top:12px;display:none;text-align:center}
+
+  #flora-order .fo-order{position:relative;background:var(--soft);font:14px var(--mono)}
+  #flora-order .row{display:flex;justify-content:space-between;gap:12px;padding:8px 0}
+  #flora-order .row span:last-child{text-align:right}
+  #flora-order .head{border-bottom:1px dashed #d4d4cc;padding-bottom:14px;margin-bottom:8px;font-weight:700;letter-spacing:.1em}
+  #flora-order .free{color:#16a34a;font-weight:700}
+  #flora-order .total{border-top:1px dashed #d4d4cc;margin-top:10px;padding-top:16px;font-weight:700;align-items:center}
+  #flora-order .total span:last-child{font:800 28px var(--sans);letter-spacing:-.02em}
+  #flora-order .fo-stamp{position:absolute;right:22px;bottom:74px;transform:rotate(-12deg);pointer-events:none;user-select:none;padding:8px 14px;border:3px solid var(--red);border-radius:8px;outline:1.5px solid var(--red);outline-offset:-7px;color:var(--red);opacity:.82;font:700 12px/1.35 var(--mono);letter-spacing:.14em;text-align:center;text-transform:uppercase;background:rgba(250,250,247,.35)}
+
+  #flora-order .fo-after{margin-top:20px}
+  #flora-order .fo-after ol{list-style:none;margin:14px 0 0;padding:0}
+  #flora-order .fo-after li{display:flex;gap:14px;padding:9px 0;font-size:14px;line-height:1.45}
+  #flora-order .fo-after i{font:700 14px var(--mono);color:var(--acc)}
+  #flora-order .fo-quote{margin-top:20px;background:var(--ink);color:#fff;border-radius:var(--r);padding:26px}
+  #flora-order .fo-quote p{font:500 19px/1.35 var(--sans);letter-spacing:-.01em;margin:0 0 14px}
+  #flora-order .fo-quote small{font:12px var(--mono);color:#a3a3a3}
+
+  @media(max-width:1024px){
+    #flora-order .fo-grid{grid-template-columns:1.4fr 1fr;gap:20px}
+    #flora-order .fo-card{padding:24px}
+  }
+  @media(max-width:860px){
+    #flora-order{padding:36px 16px 64px}
+    #flora-order .fo-grid,#flora-order .fo-fields{grid-template-columns:1fr}
+    #flora-order .fo-card{padding:22px}
+    #flora-order .fo-steps{margin-bottom:24px}
+    #flora-order .fo-stamp{bottom:70px}
+    #flora-order input[type=text],#flora-order input[type=email],#flora-order input[type=tel],#flora-order select{font-size:16px}
+  }
+  @media(max-width:480px){
+    #flora-order{padding:28px 14px 56px}
+    #flora-order h1{margin-bottom:14px}
+    #flora-order h2{font-size:21px}
+    #flora-order .fo-card{padding:18px;border-radius:14px}
+    #flora-order .fo-private,#flora-order .fo-drop{padding:14px}
+    #flora-order .fo-btn{font-size:14px;padding:12px 14px;line-height:1.3}
+    #flora-order .fo-order{font-size:13px}
+    #flora-order .total span:last-child{font-size:24px}
+    #flora-order .fo-stamp{right:14px;bottom:64px;font-size:10px;padding:6px 10px}
+    #flora-order .fo-quote{padding:20px}
+    #flora-order .fo-quote p{font-size:17px}
+  }
+</style>
+
+<section id="flora-order">
+  <div class="fo-wrap">
+    <div class="fo-eyebrow">{{ section.settings.eyebrow }}</div>
+    <h1>{{ section.settings.heading }}</h1>
+    <div class="fo-steps"><b>01 Where you're headed</b><span>02 Payment</span></div>
+
+    <div class="fo-grid">
+      <div class="fo-card">
+        <h2>01 · Tell Flora where you're headed</h2>
+        <p class="fo-sub">Five quick boxes. Flora asks the deeper questions herself, after you order.</p>
+
+        <label class="fo-private">
+          <input type="checkbox" id="fo-private">
+          <span>
+            <strong>I'd rather share my details with Flora privately</strong>
+            <small>Skip the form. After payment you'll get a private portal link by email, and you can share everything there, directly with Flora.</small>
+          </span>
+        </label>
+
+        {%- comment -%} Posts to /cart/add so Shopify stores the resume. properties[...] show on the order in admin and emails. {%- endcomment -%}
+        <form id="fo-form" action="{{ routes.cart_add_url }}" method="post" enctype="multipart/form-data" novalidate>
+          <input type="hidden" name="id" id="fo-variant" value="{{ variant.id }}">
+          <input type="hidden" name="quantity" value="1">
+          <input type="hidden" name="return_to" id="fo-return" value="/checkout">
+          <input type="hidden" name="properties[Share privately]" id="fo-private-val" value="No">
+
+          <div class="fo-fields" id="fo-fields">
+            <div><label for="fo-email">Email (your portal link and draft arrive here)</label><input type="email" id="fo-email" name="properties[Email]" placeholder="you@email.com" autocomplete="email"></div>
+            <div><label for="fo-name">Full name</label><input type="text" id="fo-name" name="properties[Full name]" placeholder="Jane Doe" autocomplete="name"></div>
+            <div><label for="fo-phone">Phone / WhatsApp</label><input type="tel" id="fo-phone" name="properties[Phone]" placeholder="+1 555 000 0000" autocomplete="tel"></div>
+            <div><label for="fo-current">Your current role</label><input type="text" id="fo-current" name="properties[Current role]" placeholder="e.g. Marketing Coordinator"></div>
+            <div><label for="fo-target">The role you want next</label><input type="text" id="fo-target" name="properties[Target role]" placeholder="e.g. Senior Product Manager"></div>
+            <div>
+              <label for="fo-exp">Years of experience</label>
+              <select id="fo-exp" name="properties[Experience]">
+                <option value="">Choose one</option>
+                <option>Less than 2 years</option><option>2–5 years</option><option>5–10 years</option>
+                <option>10–15 years</option><option>15+ years</option>
+              </select>
+            </div>
+
+            <div class="fo-full">
+              <label for="fo-resume">Upload your current resume <span class="fo-opt">(optional)</span></label>
+              <label class="fo-drop" id="fo-drop" for="fo-resume">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m17 8-5-5-5 5M12 3v12"/></svg>
+                <span><b>Click to choose a file</b> or drag it here<small>PDF, DOC or DOCX · max 10 MB</small></span>
+                <input type="file" id="fo-resume" name="properties[Current resume]" accept=".pdf,.doc,.docx">
+              </label>
+              <input type="hidden" id="fo-resume-name" name="properties[Resume file name]" value="">
+              <div class="fo-file" id="fo-file"><em id="fo-file-name"></em><button type="button" id="fo-file-remove">Remove</button></div>
+            </div>
+          </div>
+        </form>
+
+        <button type="button" class="fo-btn" id="fo-submit">Continue to secure payment · <span class="fo-price">{{ variant.price | money }}</span></button>
+        <div class="fo-error" id="fo-error" role="alert"></div>
+        <p class="fo-note">🔒 Payment is completed on Shopify's secure checkout. No countdown timers. No surprise upsells. No AI.</p>
+      </div>
+
+      <aside>
+        <div class="fo-card fo-order">
+          <div class="row head"><span>WORK ORDER</span><span>No. [AUTO]</span></div>
+          <div class="row"><span id="fo-title">{{ product.title | default: 'Professional resume' }}</span><span class="fo-price">{{ variant.price | money }}</span></div>
+          <div class="row"><span>Custom cover letter</span><span class="free">FREE</span></div>
+          <div class="row"><span>LinkedIn optimization</span><span class="free">FREE</span></div>
+          <div class="row"><span>Revisions</span><span>Until you're happy</span></div>
+          <div class="row"><span>Written by</span><span>Flora</span></div>
+          <div class="row total"><span>TOTAL</span><span class="fo-price">{{ variant.price | money }}</span></div>
+          <div class="fo-stamp" aria-hidden="true">60-day<br>interview<br>promise</div>
+        </div>
+
+        <div class="fo-card fo-after">
+          <h3>What happens after you pay</h3>
+          <ol>
+            <li><i>01</i><span><b>Flora emails you</b>, personally, with her questions.</span></li>
+            <li><i>02</i><span><b>First draft in 6 hours</b> once she has your answers.</span></li>
+            <li><i>03</i><span><b>Revise together</b> until it sounds like you.</span></li>
+            <li><i>04</i><span><b>No interview in 60 days?</b> She rewrites it free.</span></li>
+          </ol>
+        </div>
+
+        <div class="fo-quote">
+          <p>“A chatbot only knows what you tell it. I keep asking until you remember the good stuff.”</p>
+          <small>Flora · not a robot · still typing…</small>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<script>
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  var MAX = 10 * 1024 * 1024;
+  var form = $('fo-form'), btn = $('fo-submit'), err = $('fo-error'), fields = $('fo-fields');
+  var priv = $('fo-private'), file = $('fo-resume'), fileBox = $('fo-file'), drop = $('fo-drop');
+  var inputs = fields.querySelectorAll('input, select');
+
+  function setDisabled(v) { for (var i = 0; i < inputs.length; i++) inputs[i].disabled = v; }
+  function showError(msg) { err.textContent = msg; err.style.display = 'block'; btn.disabled = false; }
+  function post(url, data) {
+    return fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data || {}) });
+  }
+
+  /* /pages/order?plan=product-handle swaps the product */
+  var plan = new URLSearchParams(location.search).get('plan');
+  if (plan) {
+    fetch('/products/' + encodeURIComponent(plan) + '.js')
+      .then(function (r) { return r.ok ? r.json() : Promise.reject(); })
+      .then(function (p) {
+        var v = p.variants.filter(function (x) { return x.available; })[0] || p.variants[0];
+        var cur = (window.Shopify && Shopify.currency && Shopify.currency.active) || 'USD';
+        var price = new Intl.NumberFormat('en-US', { style: 'currency', currency: cur }).format(v.price / 100);
+        $('fo-variant').value = v.id;
+        $('fo-title').textContent = p.title;
+        document.querySelectorAll('#flora-order .fo-price').forEach(function (el) { el.textContent = price; });
+      })
+      .catch(function () {});
+  }
+
+  /* Resume upload */
+  function clearFile() { file.value = ''; $('fo-resume-name').value = ''; fileBox.classList.remove('is-on'); }
+  function showFile() {
+    var f = file.files[0];
+    if (!f) return clearFile();
+    if (f.size > MAX) { clearFile(); return showError('That file is over 10 MB. Please choose a smaller one.'); }
+    err.style.display = 'none';
+    $('fo-file-name').textContent = $('fo-resume-name').value = f.name; /* Shopify renames the upload, so keep the original name */
+    fileBox.classList.add('is-on');
+  }
+  file.addEventListener('change', showFile);
+  $('fo-file-remove').addEventListener('click', clearFile);
+  ['dragenter', 'dragover'].forEach(function (ev) {
+    drop.addEventListener(ev, function (e) { e.preventDefault(); drop.classList.add('is-over'); });
+  });
+  ['dragleave', 'drop'].forEach(function (ev) {
+    drop.addEventListener(ev, function () { drop.classList.remove('is-over'); });
+  });
+  drop.addEventListener('drop', function (e) {
+    e.preventDefault();
+    if (e.dataTransfer.files.length) { file.files = e.dataTransfer.files; showFile(); }
+  });
+
+  /* Private mode hides the form and sends nothing but the flag */
+  priv.addEventListener('change', function () {
+    fields.classList.toggle('is-hidden', priv.checked);
+    if (priv.checked) clearFile();
+  });
+
+  btn.addEventListener('click', async function () {
+    err.style.display = 'none';
+    var isPriv = priv.checked, email = $('fo-email').value.trim(), name = $('fo-name').value.trim();
+
+    if (!isPriv) {
+      if (!/^\S+@\S+\.\S+$/.test(email)) return showError('Please enter a valid email.');
+      if (!name) return showError('Please enter your full name.');
+    }
+    if (!$('fo-variant').value) return showError('Product not found. Please contact support.');
+
+    btn.disabled = true;
+    $('fo-private-val').value = isPriv ? 'Yes' : 'No';
+    setDisabled(isPriv);
+
+    try {
+      await post('/cart/clear.js');
+
+      /* Also saved as cart attributes: shown under "Additional details" on the order */
+      var attrs = { 'Share privately': isPriv ? 'Yes' : 'No' };
+      if (!isPriv) {
+        attrs['Full name'] = name;
+        attrs['Email'] = email;
+        attrs['Phone'] = $('fo-phone').value.trim();
+        attrs['Current role'] = $('fo-current').value.trim();
+        attrs['Target role'] = $('fo-target').value.trim();
+        attrs['Experience'] = $('fo-exp').value;
+      }
+      await post('/cart/update.js', { attributes: attrs });
+
+      $('fo-return').value = (!isPriv && email) ? '/checkout?checkout[email]=' + encodeURIComponent(email) : '/checkout';
+      form.submit(); /* native post so the file uploads, then redirects to checkout */
+    } catch (e) {
+      setDisabled(false);
+      showError('Something went wrong. Please try again.');
+    }
+  });
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Flora Order",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow text", "default": "ORDER · TYPED · BY · HAND" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "You're three minutes from handing your story to a human." },
+    { "type": "product", "id": "product", "label": "Product (leave empty to use Professional Plan)" }
+  ],
+  "presets": [{ "name": "Flora Order" }]
+}
+{% endschema %}
